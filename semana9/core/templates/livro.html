@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livro</title>
+</head>
+<body>
+    <h1>Detalhes do livro</h1>
+
+    <h2> ID: {{ livro.id }}</h2>
+    <h2> TÍTULO: {{ livro.titulo }}</h2>
+    <h2> PÁGINAS: {{ livro.numero_paginas }}</h2>
+    <h2> PREÇO: {{ livro.preco }}</h2>
+    <h2> DATA: {{ livro.data_publicacao }}</h2>
+    <h2> GÊNERO: {{ livro.genero }}</h2>
+    <h2> ESTOQUE: {{ livro.estoque }}</h2>
+
+    <a href="{% url 'del_livro' livro.id %}"> Apagar </a>
+
+</body>
+</html>

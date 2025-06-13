@@ -7,5 +7,9 @@
 </head>
 <body>
     <h1>Pagina inicial</h1>
+
+    {% for l in livro %}
+        <p><a href="{% url 'Livro' l.id %}"> {{ l.titulo }}</a></p>
+    {% endfor %}
 </body>
 </html>
