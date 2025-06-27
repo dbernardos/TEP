@@ -20,6 +20,25 @@ def del_livro(request, pk):
     livro.delete()
     return redirect('index_url')
 
+def upg_livro(request, pk):
+    if request.method == 'GET':
+        livro = Livro.objects.get(id=pk)
+        context = {
+            'livro': livro,
+        }
+        return render(request, 'upg_livro.html', context)
+    elif request.method == 'POST':
+        titulo = request.POST.get('titulo')
+        preco = request.POST.get('preco')
+
+        livro = Livro(
+            title = titulo,
+            price = preco,
+        )
+
+        livro.save()
+        return redirect('index_url')
+
 def cadastrar_livro(request):
     if request.method == 'GET':
         return render(request, 'cad_livro.html')
@@ -33,5 +52,5 @@ def cadastrar_livro(request):
         )
 
         livro.save()
-        return redirect('/')
+        return redirect('index_url')
     
