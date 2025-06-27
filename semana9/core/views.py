@@ -17,8 +17,21 @@ def livro(request, pk):
 
 def del_livro(request, pk):
     livro = Livro.objects.get(id=pk)
-    print(f'>>>>>>>>>>> {livro}')
-    #if request.method == 'POST':
     livro.delete()
-    return redirect('index')
+    return redirect('index_url')
+
+def cadastrar_livro(request):
+    if request.method == 'GET':
+        return render(request, 'cad_livro.html')
+    elif request.method == 'POST':
+        titulo = request.POST.get('titulo')
+        preco = request.POST.get('preco')
+
+        livro = Livro(
+            title = titulo,
+            price = preco,
+        )
+
+        livro.save()
+        return redirect('/')
     

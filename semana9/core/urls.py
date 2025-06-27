@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import index, livro
+from . import views 
 
 urlpatterns = [
-    path('', index),
-    path('Livro/<int:pk>', livro, name='Livro'),
-    path('del_livro/<int:pk>', livro, name='del_livro')
+    path('', views.index, name='index_url'),
+    path('Livro/<int:pk>', views.livro, name='Livro'),
+    path('del_livro/<int:pk>', views.del_livro, name='deletar_livro_url'),
+    path('cad_livro', views.cadastrar_livro, name='cadastrar_livro_url'),
 ]
