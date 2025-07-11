@@ -11,4 +11,5 @@ urlpatterns = [
     path('entrar', views.entrar, name='entrar_url'),
     path('sair', views.sair, name='sair_url'),
     path('graf', views.graf, name='graf_url'),
+    path('features', views.features, name='features_url'),
 ]

@@ -124,4 +124,73 @@ def sair(request):
     logout(request)
     return redirect('entrar_url')
 
+
+import numpy as np
+import nltk
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+from sklearn.tree import DecisionTreeClassifier
+
+def features(request):
+    livros = Livro.objects.all()
+    df = pd.DataFrame.from_records(livros.values())
+    df = df.dropna()
+
+    # lemmatizer = WordNetLemmatizer()
+
+    # def lematizar_nltk(texto):
+    #     return ' '.join([lemmatizer.lemmatize(palavra) for palavra in texto.split()])
+
+    # # Aplicando a função nos reviews
+    # reviews_lematizados = [lematizar_nltk(review) for review in df['review_text']]
+    def get_tfidf(df):
+        # Criando o vetorizador TF-IDF
+        vectorizer = TfidfVectorizer(
+            stop_words='english', # Remove palavras comuns (stopwords)
+            lowercase=True,       # Converte tudo para minúsculas
+            min_df=5,            # Ignora palavras que aparecem em menos de 5 documentos
+            max_df=0.8,           # Ignora palavras que aparecem em mais de 50% dos docs
+            max_features=1000,     # Limita ao vocabulário mais frequente
+            dtype=np.float32 
+        )
+
+        # Aplicando o TF-IDF na coluna 'review'
+        tfidf_matrix = vectorizer.fit_transform(df['review_text'])
+
+        # Convertendo para um DataFrame
+        return pd.DataFrame(tfidf_matrix.toarray(), columns=vectorizer.get_feature_names_out())
     
+    tfidf_df = get_tfidf(df)
+    
+    # definir os intervalos e os rótulos
+    bins = [0.99, 2.0, 3.0, 5.0]
+    labels = ['negativo', 'neutro', 'positivo']
+
+    #aplicar pd.cut
+    df['classe'] = pd.cut(pd.to_numeric(df['review_score']), bins=bins, labels=labels)
+
+    # Resetar o índice para garantir alinhamento
+    tfidf_df_reset = tfidf_df.reset_index(drop=True)
+    df_reset = df.reset_index(drop=True)
+
+    # Escolha a coluna que você quer adicionar (ex: 'sentiment')
+    coluna_extra = df_reset['classe']
+
+    # Concatenar no final do tfidf_df
+    tfidf_extra = pd.concat([tfidf_df_reset, coluna_extra], axis=1)
+
+    X = tfidf_extra.drop(columns=['classe'])
+    Y = tfidf_extra['classe']
+
+    clf = DecisionTreeClassifier()
+    clf.fit(X,Y)
+    ultimo = get_tfidf({'review_text': ['the book is bad. it is very long and boring. i want my money back. i do not recommend it']})
+
+    print(ultimo)
+
+
+    tfidf_extra.to_csv('tfidf_resultados2.csv', index=False)
+    return HttpResponse('Acabou')
